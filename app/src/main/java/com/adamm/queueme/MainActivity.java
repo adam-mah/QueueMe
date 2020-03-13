@@ -1,18 +1,32 @@
 package com.adamm.queueme;
 
+import android.content.Intent;
 import android.os.Bundle;
 
+import com.firebase.ui.auth.AuthUI;
+import com.firebase.ui.auth.ErrorCodes;
+import com.firebase.ui.auth.IdpResponse;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.firebase.auth.FirebaseAuth;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
+
+import java.util.Arrays;
 
 public class MainActivity extends AppCompatActivity {
+    private static final int RC_SIGN_IN = 123;
+    private static final String TAG = "SignInActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,7 +60,16 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_logout) {
+                    AuthUI.getInstance()
+                            .signOut(this)
+                            .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    // user is now signed out
+                                    startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                                    finish();
+                                }
+                            });
             return true;
         }
 
