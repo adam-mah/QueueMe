@@ -5,80 +5,75 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.annotation.FloatRange;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.firebase.ui.auth.AuthMethodPickerLayout;
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.ErrorCodes;
 import com.firebase.ui.auth.IdpResponse;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.heinrichreimersoftware.materialintro.app.IntroActivity;
 import com.heinrichreimersoftware.materialintro.slide.SimpleSlide;
 
 import java.util.Arrays;
 
 
-public class SignInActivity extends IntroActivity {
+public class SignInActivity extends AppCompatActivity {
     private static final int RC_SIGN_IN = 123;
     private static final String TAG = "SignInActivity";
+    private Button mSignInBtn;
+    private Button mLearnMoreBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        setFullscreen(true);
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_signin);
+        if(FirebaseAuth.getInstance().getCurrentUser() != null) {
+            Intent SignedIntent = new Intent(this, MainActivity.class);
+                startActivity(SignedIntent);
+                finish();
+        }
 
-        addSlide(new SimpleSlide.Builder()
-                .title("Tired of waiting?")
-                .description("No need to wait anymore!")
-                .image(R.drawable.ic_launcher_foreground)
-                .background(R.color.colorAccent)
-                .backgroundDark(R.color.colorPrimaryDark)
-                .scrollable(false)
-                .build());
+        mSignInBtn = findViewById(R.id.SignInBtn);
+        mLearnMoreBtn = findViewById(R.id.LearnMoreBtn);
 
-        addSlide(new SimpleSlide.Builder()
-                .title("Test")
-                .description("hety")
-                .image(R.drawable.ic_launcher_foreground)
-                .background(R.color.colorAccent)
-                .backgroundDark(R.color.colorPrimaryDark)
-                .scrollable(false)
-                .build());
-
-        setButtonCtaVisible(true);
-        setButtonCtaLabel("Login");
-        setButtonCtaClickListener(new View.OnClickListener() {
+        mSignInBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(getApplicationContext(),"HEEY", Toast.LENGTH_SHORT).show();
-                startActivityForResult(
-                        // Get an instance of AuthUI based on the default app
-                        AuthUI.getInstance()
-                                .createSignInIntentBuilder().setLogo(R.drawable.ic_qme2)
-                                .setAvailableProviders(Arrays.asList(
-                                        new AuthUI.IdpConfig.EmailBuilder().build(),
-                                        new AuthUI.IdpConfig.PhoneBuilder()
-                                                .setDefaultCountryIso("il")
-                                                .setWhitelistedCountries(Arrays.asList("il")).build()))
-                                .build(), RC_SIGN_IN);
+                startActivityForResult(buildSignInIntent(), RC_SIGN_IN);
             }
         });
-        setButtonCtaVisible(true);
-       // if(FirebaseAuth.getInstance().getCurrentUser() == null) {
-            /*startActivityForResult(
-                    // Get an instance of AuthUI based on the default app
-                    AuthUI.getInstance()
-                            .createSignInIntentBuilder().setLogo(R.drawable.ic_qme2)
-                            .setAvailableProviders(Arrays.asList(
-                                    new AuthUI.IdpConfig.EmailBuilder().build(),
-                                    new AuthUI.IdpConfig.PhoneBuilder()
-                                            .setDefaultCountryIso("il")
-                                            .setWhitelistedCountries(Arrays.asList("il")).build()))
-                            .build(),
-                    RC_SIGN_IN);*/
-       // }
+
+        mLearnMoreBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent introIntent = new Intent(getApplicationContext(), IntroductionActivity.class);
+                startActivityForResult(introIntent, 2);
+            }
+        });
+    }
+
+    protected Intent buildSignInIntent()
+    {
+        AuthMethodPickerLayout customLayout = new AuthMethodPickerLayout
+                .Builder(R.layout.custom_signin_layout)
+                .setPhoneButtonId(R.id.custom_phone_signin_button)
+                .setEmailButtonId(R.id.custom_email_signin_button)
+                .build();
+        // Get an instance of AuthUI based on the default app
+        AuthUI.SignInIntentBuilder builder = AuthUI.getInstance()
+                .createSignInIntentBuilder().setAuthMethodPickerLayout(customLayout).setTheme(R.style.CustomMaterialThemeNoActionBar)
+                .setAvailableProviders(Arrays.asList(
+                        new AuthUI.IdpConfig.EmailBuilder().build(),
+                        new AuthUI.IdpConfig.PhoneBuilder()
+                                .setDefaultCountryIso("il")
+                                .setWhitelistedCountries(Arrays.asList("il")).build()));
+        return builder.build();
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -88,7 +83,8 @@ public class SignInActivity extends IntroActivity {
             IdpResponse response = IdpResponse.fromResultIntent(data);
             // Successfully signed in
             if (resultCode == RESULT_OK) {
-
+                startActivity(MainActivity.createIntent(this, response));
+                finish();
                 Toast.makeText(this, "Hurray! Signed In!", Toast.LENGTH_SHORT).show();
             } else {
                 // Sign in failed
@@ -106,5 +102,7 @@ public class SignInActivity extends IntroActivity {
                 Log.e(TAG, "Sign-in error: ", response.getError());
             }
         }
+        else if(requestCode == 2)//Intro
+            Toast.makeText(this, "Sign in requested", Toast.LENGTH_SHORT).show();
     }
 }

@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/custom_logo"
+        android:layout_width="301dp"
+        android:layout_height="282dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:src="@drawable/ic_qme3"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="ContentDescription" />
+
+    <!-- Horiz line, right of provider header -->
+    <FrameLayout
+        android:id="@+id/header_idp_wing_left"
+        style="@style/CustomWingOuter"
+        app:layout_constraintBottom_toBottomOf="@+id/header_idp_choice"
+        app:layout_constraintEnd_toStartOf="@+id/header_idp_choice"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/custom_logo"
+        app:layout_constraintVertical_bias="0.0">
+
+    </FrameLayout>
+
+    <FrameLayout
+        android:id="@+id/header_idp_wing_right"
+        style="@style/CustomWingOuter"
+        app:layout_constraintBottom_toBottomOf="@+id/header_idp_choice"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/header_idp_choice"
+        app:layout_constraintTop_toBottomOf="@+id/custom_logo">
+
+    </FrameLayout>
+
+    <com.firebase.ui.auth.util.ui.SupportVectorDrawablesButton
+        android:id="@+id/custom_phone_signin_button"
+        style="@style/FirebaseUI.Button.AccountChooser.PhoneButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="120dp"
+        android:text="@string/fui_sign_in_with_phone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.497"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/header_idp_choice" />
+
+    <View
+        android:id="@+id/view3"
+        style="@style/CustomWingInner"
+        android:layout_marginTop="1dp"
+        android:layout_marginEnd="250dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/custom_logo" />
+
+    <TextView
+        android:id="@+id/header_idp_choice"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/sign_in"
+        android:textAllCaps="true"
+        android:textColor="#FFFFFF"
+        app:layout_constraintEnd_toStartOf="@+id/header_idp_wing_right"
+        app:layout_constraintStart_toEndOf="@+id/header_idp_wing_left"
+        app:layout_constraintTop_toBottomOf="@+id/custom_logo" />
+
+    <View
+        style="@style/CustomWingInner"
+        android:layout_marginStart="250dp"
+        android:layout_marginTop="1dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/custom_logo" />
+
+    <com.firebase.ui.auth.util.ui.SupportVectorDrawablesButton
+        android:id="@+id/custom_email_signin_button"
+        style="@style/FirebaseUI.Button.AccountChooser.EmailButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="48dp"
+        android:text="@string/fui_sign_in_with_email"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.504"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/header_idp_choice" />
+
+    <FrameLayout
+        android:id="@+id/header_email_wing_left"
+        style="@style/CustomWingOuter"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:layout_editor_absoluteY="315dp">
+
+        <View style="@style/CustomWingInner" />
+
+    </FrameLayout>
+
+    <!-- Horiz line, right of email header -->
+    <FrameLayout
+        android:id="@+id/header_email_wing_right"
+        style="@style/CustomWingOuter"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:layout_editor_absoluteY="315dp" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
