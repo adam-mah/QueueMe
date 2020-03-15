@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 
+import com.adamm.queueme.fragments.ProfileFragment;
+import com.adamm.queueme.fragments.StoresFragment;
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.ErrorCodes;
 import com.firebase.ui.auth.IdpResponse;
@@ -18,6 +20,8 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.PhoneAuthProvider;
+import com.google.firebase.auth.UserInfo;
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
 import com.mikepenz.iconics.IconicsDrawable;
 import com.mikepenz.iconics.typeface.GenericFont;
@@ -39,6 +43,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.Fragment;
 
 import android.util.Log;
 import android.view.View;
@@ -50,7 +55,6 @@ public class MainActivity extends AppCompatActivity {
     private static final int RC_SIGN_IN = 123;
     private static final String TAG = "SignInActivity";
     private FirebaseUser currUser;
-    private Drawer drawer;
 
     public static Intent createIntent(@NonNull Context context, @Nullable IdpResponse response) {
         return new Intent().setClass(context, MainActivity.class)
@@ -63,7 +67,9 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
 //        setSupportActionBar(toolbar);
+        currUser = FirebaseAuth.getInstance().getCurrentUser();
         initializeDrawer(toolbar);
+
         //IdpResponse response = getIntent().getParcelableExtra(ExtraConstants.IDP_RESPONSE);
 
         FloatingActionButton fab = findViewById(R.id.fab);
@@ -107,61 +113,77 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+
     private void initializeDrawer(Toolbar toolbar) {
         // Create the AccountHeader
+       // S profile = currUser.getProviderId();
+
         AccountHeader headerResult = new AccountHeaderBuilder()
                 .withActivity(this)
-                .withHeaderBackground(R.drawable.ic_qme).withSelectionListEnabled(false)
-                .addProfiles(new ProfileDrawerItem().withName("Adam Mahameed").withEmail("+972502612212"))
+                .withHeaderBackground(R.drawable.ic_qme).withSelectionListEnabled(false).withProfileImagesVisible(false)
+                .addProfiles(new ProfileDrawerItem().withName(currUser.getDisplayName()).withEmail(currUser.getProviderId().equals(PhoneAuthProvider.PROVIDER_ID) ? currUser.getPhoneNumber() : currUser.getEmail()))
                 .build();
-
 
         PrimaryDrawerItem profile = new PrimaryDrawerItem().withIdentifier(1).withName(R.string.profile).withIcon(new IconicsDrawable(this)
                 .icon(GoogleMaterial.Icon.gmd_person).color(Color.rgb(203, 84, 39)));
         PrimaryDrawerItem queues = new PrimaryDrawerItem().withIdentifier(2).withName(R.string.my_queues).withIcon(new IconicsDrawable(this).icon(GoogleMaterial.Icon.gmd_queue).color(Color.rgb(203, 84, 39)));
         PrimaryDrawerItem stores = new PrimaryDrawerItem().withIdentifier(3).withName(R.string.stores).withIcon(new IconicsDrawable(this).icon(GoogleMaterial.Icon.gmd_store).color(Color.rgb(203, 84, 39)));
-        SecondaryDrawerItem logout = new SecondaryDrawerItem().withIdentifier(4).withName(R.string.logout).withIcon(new IconicsDrawable(this).icon(GoogleMaterial.Icon.gmd_exit_to_app).color(Color.rgb(203, 84, 39)));
+        PrimaryDrawerItem logout = new PrimaryDrawerItem().withIdentifier(4).withName(R.string.logout).withIcon(new IconicsDrawable(this).icon(GoogleMaterial.Icon.gmd_exit_to_app).color(Color.rgb(203, 84, 39)));
 
 
         //create the drawer and remember the `Drawer` result object
-        drawer = new DrawerBuilder().withAccountHeader(headerResult)
+        new DrawerBuilder().withAccountHeader(headerResult)
                 .withActivity(this)
                 .withToolbar(toolbar)
-                .addDrawerItems(
-                        profile,
-                        new DividerDrawerItem(),
-                        queues,
-                        stores,
-                        logout)
-                .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
-                    @Override
-                    public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
-                        switch ((int) drawerItem.getIdentifier()) {
-                            case 4:
+                .addDrawerItems(profile, new DividerDrawerItem(), queues, stores, logout).withCloseOnClick(true)
+                .withOnDrawerItemClickListener(drawerListener).withSelectedItem(2)
+                .build();
+    }
+
+    private Drawer.OnDrawerItemClickListener drawerListener = new Drawer.OnDrawerItemClickListener() {
+        @Override
+        public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
+            Fragment fragment = null;
+            Class fragmentClass = null;
+            switch ((int) drawerItem.getIdentifier()) {
+                case 1:
+                    fragmentClass = ProfileFragment.class;
+                    break;
+                case 2:
+
+                    break;
+                case 3:
+                    fragmentClass = StoresFragment.class;
+                    break;
+                case 4:
                                /* AlertDialog.Builder builder = new MaterialAlertDialogBuilder(getApplicationContext())
                                         .setTitle("Title")
                                         .setMessage("Message")
                                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                                             @Override
                                             public void onClick(DialogInterface dialogInterface, int i) {*/
-                                                AuthUI.getInstance()
-                                                        .signOut(getApplicationContext())
-                                                        .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                                            public void onComplete(@NonNull Task<Void> task) {
-                                                                // user is now signed out
-                                                                startActivity(new Intent(getApplicationContext(), SignInActivity.class));
-                                                                finish();
-                                                            }
-                                                        });
+                    AuthUI.getInstance()
+                            .signOut(getApplicationContext())
+                            .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    // user is now signed out
+                                    startActivity(new Intent(getApplicationContext(), SignInActivity.class));
+                                    finish();
+                                }
+                            });
                                            /* }
                                         });
                                 builder.show();*/
-                                break;
-                        }
-                        //Toast.makeText(getApplicationContext(), position + "", Toast.LENGTH_SHORT).show();
-                        return true;
-                    }
-                })
-                .build();
-    }
+                    break;
+            }
+            try {
+                fragment = (Fragment)fragmentClass.newInstance();
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, fragment).commit();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            //Toast.makeText(getApplicationContext(), position + "", Toast.LENGTH_SHORT).show();
+            return true;
+        }
+    };
 }
