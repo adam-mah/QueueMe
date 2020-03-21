@@ -102,6 +102,13 @@
                 android:ems="10"
                 android:inputType="textVisiblePassword|textPassword"
                 android:password="false" />
+
+            <Button
+                android:id="@+id/btnUpdatePassword"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/update_password" />
         </LinearLayout>
 
         <Button

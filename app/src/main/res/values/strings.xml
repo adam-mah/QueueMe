@@ -10,7 +10,10 @@
     <string name="full_name">Full Name</string>
     <string name="update_profile">Update Profile</string>
     <string name="favorite_stores">Favorite Stores</string>
-
+    <string name="update_password">Update Password</string>
+    <string name="invalid_email_format">Invalid Email Format</string>
+    <string name="invalid_password">Password must be longer than 6</string>
+    <string name="invalid_phone">Invalid Phone Number</string>
     <string name="label_manage_user">Manage User</string>
 
     <string name="learn_more">Learn More</string>

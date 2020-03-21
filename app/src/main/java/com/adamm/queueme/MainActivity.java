@@ -1,12 +1,11 @@
 package com.adamm.queueme;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -27,18 +26,9 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.auth.PhoneAuthProvider;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.mikepenz.google_material_typeface_library.GoogleMaterial;
-import com.mikepenz.iconics.IconicsDrawable;
-import com.mikepenz.materialdrawer.AccountHeader;
-import com.mikepenz.materialdrawer.AccountHeaderBuilder;
 import com.mikepenz.materialdrawer.Drawer;
-import com.mikepenz.materialdrawer.DrawerBuilder;
-import com.mikepenz.materialdrawer.model.DividerDrawerItem;
-import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
-import com.mikepenz.materialdrawer.model.ProfileDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 
 public class MainActivity extends AppCompatActivity {
@@ -46,6 +36,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = "SignInActivity";
     private FirebaseUser currUser;
     private Fragment profileFrag, myQueuesFrag, favoritesFrag, storesFrag;
+    private Toolbar toolbar;
 
     public static Intent createIntent(@NonNull Context context, @Nullable IdpResponse response) {
         return new Intent().setClass(context, MainActivity.class)
@@ -56,10 +47,12 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        // setSupportActionBar(toolbar);
+        toolbar = findViewById(R.id.toolbar);
+       // toolbar.setTitleTextColor(getResources().);
+        setSupportActionBar(toolbar);
+        DrawerUtil.getDrawer(this, toolbar, drawerListener);
+
         currUser = FirebaseAuth.getInstance().getCurrentUser();
-        initializeDrawer(toolbar);
 
         IdpResponse response = getIntent().getParcelableExtra(ExtraConstants.IDP_RESPONSE);
         DocumentReference userRef = FirebaseFirestore.getInstance().collection("users").document(currUser.getUid());
@@ -79,9 +72,17 @@ public class MainActivity extends AppCompatActivity {
         myQueuesFrag= null;
         favoritesFrag = FavoritesFragment.newInstance();
         storesFrag = StoresFragment.newInstance();
+
+        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, storesFrag).commit();
     }
 
-    @Override
+    public static void hideSoftKeyboard(Activity activity) {
+        InputMethodManager inputMethodManager =
+                (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
+        inputMethodManager.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(), 0);
+    }
+
+   /* @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
@@ -110,56 +111,30 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-
-    private void initializeDrawer(Toolbar toolbar) {
-        // Create the AccountHeader
-        // S profile = currUser.getProviderId();
-
-        AccountHeader headerResult = new AccountHeaderBuilder()
-                .withActivity(this)
-                .withHeaderBackground(R.drawable.ic_qme).withSelectionListEnabled(false).withProfileImagesVisible(false)
-                .addProfiles(new ProfileDrawerItem().withName(currUser.getDisplayName()).withEmail(currUser.getProviderId().equals(PhoneAuthProvider.PROVIDER_ID) ? currUser.getPhoneNumber() : currUser.getEmail()))
-                .build();
-
-        PrimaryDrawerItem profile = new PrimaryDrawerItem().withIdentifier(1).withName(R.string.profile).withIcon(new IconicsDrawable(this)
-                .icon(GoogleMaterial.Icon.gmd_person).color(Color.rgb(203, 84, 39)));
-        PrimaryDrawerItem queues = new PrimaryDrawerItem().withIdentifier(2).withName(R.string.my_queues).withIcon(new IconicsDrawable(this).icon(GoogleMaterial.Icon.gmd_queue).color(Color.rgb(203, 84, 39)));
-        PrimaryDrawerItem favoriteStores = new PrimaryDrawerItem().withIdentifier(3).withName(R.string.favorite_stores).withIcon(GoogleMaterial.Icon.gmd_favorite).withIconColor(Color.rgb(203, 84, 39));
-        PrimaryDrawerItem stores = new PrimaryDrawerItem().withIdentifier(4).withName(R.string.stores).withIcon(new IconicsDrawable(this).icon(GoogleMaterial.Icon.gmd_store).color(Color.rgb(203, 84, 39)));
-        PrimaryDrawerItem logout = new PrimaryDrawerItem().withIdentifier(5).withName(R.string.logout).withIcon(new IconicsDrawable(this).icon(GoogleMaterial.Icon.gmd_exit_to_app).color(Color.rgb(203, 84, 39)));
-
-
-        //create the drawer and remember the `Drawer` result object
-        new DrawerBuilder().withAccountHeader(headerResult)
-                .withActivity(this)
-                .withToolbar(toolbar)
-                .addDrawerItems(profile, new DividerDrawerItem(), queues, favoriteStores, stores, logout).withCloseOnClick(true)
-                .withOnDrawerItemClickListener(drawerListener).withSelectedItem(2)
-                .build();
-    }
+    }*/
 
     private Drawer.OnDrawerItemClickListener drawerListener = new Drawer.OnDrawerItemClickListener() {
         @Override
         public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
             Fragment fragment = null;
-            Class fragmentClass = null;
             switch ((int) drawerItem.getIdentifier()) {
                 case 1:
-                    fragmentClass = ProfileFragment.class;
+                    toolbar.setTitle(R.string.profile);
                     fragment = profileFrag;
+                    DrawerUtil.drawer.closeDrawer();
                     break;
                 case 2:
-
+                    toolbar.setTitle(R.string.my_queues);
                     break;
                 case 3:
-                    fragmentClass = FavoritesFragment.class;
+                    toolbar.setTitle(R.string.favorite_stores);
                     fragment = favoritesFrag;
+                    DrawerUtil.drawer.closeDrawer();
                     break;
                 case 4:
-                    fragmentClass = StoresFragment.class;
+                    toolbar.setTitle(R.string.stores);
                     fragment = storesFrag;
+                    DrawerUtil.drawer.closeDrawer();
                     break;
                 case 5:
                                /* AlertDialog.Builder builder = new MaterialAlertDialogBuilder(getApplicationContext())
