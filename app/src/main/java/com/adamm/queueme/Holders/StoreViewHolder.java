@@ -1,5 +1,6 @@
 package com.adamm.queueme.Holders;
 
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.adamm.queueme.R;
+import com.adamm.queueme.StoreQueueActivity;
 import com.adamm.queueme.entities.Store;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -73,6 +75,8 @@ public class StoreViewHolder extends RecyclerView.ViewHolder implements View.OnC
 
     @Override
     public void onClick(View view) {
+        Intent intent = StoreQueueActivity.createIntent(view.getContext(), store.getStoreName());
+        view.getContext().startActivity(intent);
         Toast.makeText(view.getContext(), "Clicked on " + store.getStoreName(), Toast.LENGTH_LONG).show();
     }
 }
