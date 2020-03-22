@@ -1,9 +1,11 @@
 package com.adamm.queueme.fragments;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -24,6 +26,7 @@ import com.google.firebase.firestore.Query;
 public class FavoritesFragment extends Fragment {
 
     private RecyclerView mFavoritesRecycler;
+    private TextView mEmptyListMessage;
     public static final CollectionReference favCollection = FirebaseFirestore.getInstance().collection("users").document(FirebaseAuth.getInstance().getCurrentUser().getUid()).collection("Favorites");
 
     public static FavoritesFragment newInstance() {
@@ -43,6 +46,7 @@ public class FavoritesFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mFavoritesRecycler = view.findViewById(R.id.favoritesRecycler);
+        mEmptyListMessage = view.findViewById(R.id.txtEmptyMessage);
         LinearLayoutManager mManager = new LinearLayoutManager(getActivity());
         mManager.setReverseLayout(true);
         mManager.setStackFromEnd(true);
@@ -83,13 +87,13 @@ public class FavoritesFragment extends Fragment {
 
             @Override
             protected void onBindViewHolder(StoreViewHolder holder, int position, Store store) {
-                holder.bind(store, true);//All queried results are favorites
+                holder.bind(store, true, getSnapshots().getSnapshot(position).getId());//All queried results are favorites
             }
 
             @Override
             public void onDataChanged() {
-                // If there are no chat messages, show a view that invites the user to add a message.
-                // mEmptyListMessage.setVisibility(getItemCount() == 0 ? View.VISIBLE : View.GONE);
+                // If there are no favored stores
+                mEmptyListMessage.setVisibility(getItemCount() == 0 ? View.VISIBLE : View.GONE);
             }
         };
     }

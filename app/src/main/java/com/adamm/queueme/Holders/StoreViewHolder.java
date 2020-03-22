@@ -25,6 +25,7 @@ public class StoreViewHolder extends RecyclerView.ViewHolder implements View.OnC
     private final TextView mStoreNameField;
     private final TextView mStoreOwnerField;
     private final ImageView mFavImage;
+    private String documentID;
     private boolean isFavorite;
     private Store store;
 
@@ -36,7 +37,8 @@ public class StoreViewHolder extends RecyclerView.ViewHolder implements View.OnC
         itemView.setOnClickListener(this);
     }
 
-    public void bind(final Store storeO, boolean isFavored) {
+    public void bind(final Store storeO, boolean isFavored, final String documentID) {
+        this.documentID = documentID;
         this.store = storeO;//Store data
         this.isFavorite = isFavored;//If store is favored
         mStoreNameField.setText(store.getStoreName());
@@ -52,7 +54,7 @@ public class StoreViewHolder extends RecyclerView.ViewHolder implements View.OnC
             public void onClick(final View view) {
                 if (isFavorite) {//Remove from favorites
                     isFavorite = false;
-                    favCollection.document(store.getStoreName()).delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+                    favCollection.document(documentID).delete().addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
                             mFavImage.setImageResource(R.drawable.ic_star_outline);
@@ -61,7 +63,7 @@ public class StoreViewHolder extends RecyclerView.ViewHolder implements View.OnC
                     });
                 } else {//Add to favorites
                     isFavorite = true;
-                    favCollection.document(store.getStoreName()).set(store).addOnCompleteListener(new OnCompleteListener<Void>() {//Add to favorites and change icon on finish
+                    favCollection.document(documentID).set(store).addOnCompleteListener(new OnCompleteListener<Void>() {//Add to favorites and change icon on finish
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
                             mFavImage.setImageResource(R.drawable.ic_star);
@@ -75,8 +77,9 @@ public class StoreViewHolder extends RecyclerView.ViewHolder implements View.OnC
 
     @Override
     public void onClick(View view) {
-        Intent intent = StoreQueueActivity.createIntent(view.getContext(), store.getStoreName());
+        Intent intent = StoreQueueActivity.createIntent(view.getContext(), documentID);
+        intent.putExtra("storeName", store.getStoreName());//fix
         view.getContext().startActivity(intent);
-        Toast.makeText(view.getContext(), "Clicked on " + store.getStoreName(), Toast.LENGTH_LONG).show();
+        Toast.makeText(view.getContext(), "Clicked on " + store.getStoreName() + " ID" + documentID, Toast.LENGTH_LONG).show();
     }
 }

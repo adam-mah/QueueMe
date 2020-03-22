@@ -120,7 +120,7 @@ public class StoresFragment extends Fragment {
                         Log.d("FoundFav", fav.getStoreID()+" ");
                         break;
                     }
-                holder.bind(store, isFavorite);
+                holder.bind(store, isFavorite, getSnapshots().getSnapshot(position).getId());
             }
 
             @Override

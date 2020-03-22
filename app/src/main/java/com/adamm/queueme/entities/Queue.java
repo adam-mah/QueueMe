@@ -1,20 +1,25 @@
 package com.adamm.queueme.entities;
 
-import com.google.firebase.Timestamp;
+import androidx.annotation.Nullable;
 
-//Queued is a document stored inside Stores/store-name/Queue/ Sub-collection
-public class Queued {
+import com.google.firebase.Timestamp;
+import com.google.firebase.firestore.ServerTimestamp;
+
+import java.util.Date;
+
+//Queue is a document stored inside Stores/store-name/Queue/ Sub-collection
+public class Queue {
     private String userID;
-    private String storeID;
-    private Timestamp timestamp;
+    //private String storeID;
+    private Date timestamp;
     private boolean isValid;
 
-    public Queued() {
-    }
+    public Queue() {}
 
-    public Queued(String userID, String storeID) {
+    public Queue(String userID/*, String storeID*/) {
         this.userID = userID;
-        this.storeID = storeID;
+        //this.storeID = storeID;
+        isValid = true;
     }
 
     public String getUserID() {
@@ -25,19 +30,21 @@ public class Queued {
         this.userID = userID;
     }
 
-    public String getStoreID() {
+    /*public String getStoreID() {
         return storeID;
     }
 
     public void setStoreID(String storeID) {
         this.storeID = storeID;
-    }
+    }*/
 
-    public Timestamp getTimestamp() {
+    @ServerTimestamp
+    @Nullable
+    public Date getTimestamp() {
         return timestamp;
     }
 
-    public void setTimestamp(Timestamp timestamp) {
+    public void setTimestamp(@Nullable Date timestamp) {
         this.timestamp = timestamp;
     }
 
