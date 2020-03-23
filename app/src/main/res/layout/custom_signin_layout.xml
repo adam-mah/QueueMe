@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/colorAccent">
 
     <ImageView
         android:id="@+id/custom_logo"
@@ -12,7 +13,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
-        android:src="@drawable/ic_qme3"
+        android:src="@drawable/ic_qme4"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -91,7 +92,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/header_idp_choice" />
 
-    <FrameLayout
+    <!--<FrameLayout
         android:id="@+id/header_email_wing_left"
         style="@style/CustomWingOuter"
         app:layout_constraintStart_toStartOf="parent"
@@ -101,11 +102,10 @@
 
     </FrameLayout>
 
-    <!-- Horiz line, right of email header -->
+
     <FrameLayout
         android:id="@+id/header_email_wing_right"
         style="@style/CustomWingOuter"
         app:layout_constraintEnd_toEndOf="parent"
-        tools:layout_editor_absoluteY="315dp" />
-
+        tools:layout_editor_absoluteY="315dp" />-->
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -35,6 +35,12 @@
             android:label="@string/store_queue"
             android:theme="@style/MainMaterialTheme">
         </activity>
+
+        <activity
+            android:name=".NewQueueActivity"
+            android:label="@string/new_queue"
+            android:theme="@style/MainMaterialTheme">
+        </activity>
     </application>
 
 </manifest>

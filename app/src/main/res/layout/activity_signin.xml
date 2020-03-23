@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:background="@color/colorAccent">
 
     <Space
         android:layout_width="match_parent"
@@ -13,7 +14,7 @@
         android:id="@+id/imageView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:srcCompat="@drawable/ic_qme3" />
+        app:srcCompat="@drawable/ic_qme4" />
 
     <Space
         android:layout_width="match_parent"
@@ -27,15 +28,19 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/SignInBtn"
-            android:layout_width="118dp"
+            android:layout_width="188dp"
             android:layout_height="68dp"
-            android:text="@string/sign_in" />
-
+            android:backgroundTint="@color/colorPrimaryDark"
+            android:text="@string/sign_in"
+            />
+        <!--style="?attr/materialButtonOutlinedStyle"-->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/LearnMoreBtn"
             android:layout_width="188dp"
-            android:layout_height="65dp"
-            android:text="@string/learn_more" />
+            android:layout_height="68dp"
+            android:text="@string/learn_more"
+            android:backgroundTint="@color/colorPrimaryDark"
+            />
 
     </LinearLayout>
 

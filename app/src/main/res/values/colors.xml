@@ -4,6 +4,7 @@
     <color name="colorPrimaryDark">#DCB13919</color>
     <color name="colorAccent">#cb5427</color>
     <color name="colorAccentDef">#0087FF</color>
+    <color name="colorWhite">#E2E2E2</color>
 
     <!-- Material DEFAULT colors -->
     <color name="material_drawer_primary">#DCF54E20</color>
