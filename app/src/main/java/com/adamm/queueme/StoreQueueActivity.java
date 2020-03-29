@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.ViewGroup;
 import androidx.appcompat.widget.Toolbar;
 
@@ -19,6 +20,8 @@ import com.adamm.queueme.Holders.StoreViewHolder;
 import com.adamm.queueme.entities.Queue;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
@@ -51,6 +54,17 @@ public class StoreQueueActivity extends AppCompatActivity {
         queueCollection = FirebaseFirestore.getInstance().collection("stores").document(getIntent().getStringExtra("EXTRA_STORE")).collection("Queue");
         toolbar.setTitle(getIntent().getStringExtra("storeName") + " Store Queue");
         attachRecyclerViewAdapter();//Initiate adapter
+
+        FloatingActionButton fab = findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = NewQueueActivity.createIntent(view.getContext(), getIntent().getStringExtra("EXTRA_STORE"));
+                view.getContext().startActivity(intent);
+               /* Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();*/
+            }
+        });
     }
 
     @Override

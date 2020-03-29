@@ -59,15 +59,6 @@ public class MainActivity extends AppCompatActivity {
        // if (response.isNewUser())
             userRef.set(new User(currUser.getUid(), currUser.getDisplayName(), currUser.getPhoneNumber(), currUser.getEmail()));
 
-        FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
-
         profileFrag = ProfileFragment.newInstance();
         myQueuesFrag= null;
         favoritesFrag = FavoritesFragment.newInstance();

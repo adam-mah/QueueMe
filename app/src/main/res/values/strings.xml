@@ -17,6 +17,7 @@
     <string name="label_manage_user">Manage User</string>
     <string name="store_queue">Store Queue</string>
     <string name="new_queue">New Queue</string>
+    <string name="queue_time">Queue Time</string>
 
     <string name="learn_more">Learn More</string>
 
