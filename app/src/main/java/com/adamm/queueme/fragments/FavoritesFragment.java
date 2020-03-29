@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.adamm.queueme.Holders.StoreViewHolder;
+import com.adamm.queueme.MainActivity;
 import com.adamm.queueme.R;
 import com.adamm.queueme.entities.Store;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
@@ -27,7 +28,7 @@ public class FavoritesFragment extends Fragment {
 
     private RecyclerView mFavoritesRecycler;
     private TextView mEmptyListMessage;
-    public static final CollectionReference favCollection = FirebaseFirestore.getInstance().collection("users").document(FirebaseAuth.getInstance().getCurrentUser().getUid()).collection("Favorites");
+    public static final CollectionReference favCollection = FirebaseFirestore.getInstance().collection("users").document(MainActivity.currUser.getUid()).collection("Favorites");
 
     public static FavoritesFragment newInstance() {
         FavoritesFragment f = new FavoritesFragment();

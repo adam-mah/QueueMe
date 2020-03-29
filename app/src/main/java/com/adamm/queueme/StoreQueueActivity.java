@@ -7,6 +7,8 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
+
 import androidx.appcompat.widget.Toolbar;
 
 import androidx.annotation.NonNull;
@@ -23,17 +25,19 @@ import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 
 public class StoreQueueActivity extends AppCompatActivity {
     private RecyclerView mQueueRecycler;
-    private CollectionReference queueCollection;
+    private CollectionReference storeQueueCollection;
     private Toolbar toolbar;
+    private String documentID;
     private Query storeQuery;
 
     public static Intent createIntent(@NonNull Context context, String documentID) {
-        return new Intent().setClass(context, StoreQueueActivity.class).putExtra("EXTRA_STORE", documentID/*store document ID*/);
+        return new Intent().setClass(context, StoreQueueActivity.class).putExtra("EXTRA_STORE_ID", documentID/*store document ID*/);
     }
 
     @Override
@@ -51,17 +55,19 @@ public class StoreQueueActivity extends AppCompatActivity {
         mManager.setReverseLayout(true);
         mManager.setStackFromEnd(true);
         mQueueRecycler.setLayoutManager(mManager);
-        queueCollection = FirebaseFirestore.getInstance().collection("stores").document(getIntent().getStringExtra("EXTRA_STORE")).collection("Queue");
-        toolbar.setTitle(getIntent().getStringExtra("storeName") + " Store Queue");
+
+        documentID = getIntent().getStringExtra("EXTRA_STORE_ID");
+        storeQueueCollection = FirebaseFirestore.getInstance().collection("stores").document(documentID).collection("Queue");
+        toolbar.setTitle(getIntent().getStringExtra("EXTRA_STORE_NAME") + " Store Queue");
         attachRecyclerViewAdapter();//Initiate adapter
 
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = NewQueueActivity.createIntent(view.getContext(), getIntent().getStringExtra("EXTRA_STORE"));
+                Intent intent = NewQueueActivity.createIntent(view.getContext(), documentID);
                 view.getContext().startActivity(intent);
-               /* Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                /*Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();*/
             }
         });
@@ -93,7 +99,8 @@ public class StoreQueueActivity extends AppCompatActivity {
 
     @NonNull
     private RecyclerView.Adapter newAdapter() {
-        Query query = queueCollection.whereEqualTo("isValid", true).orderBy("timestamp");//Get store queue list and sort by timestamp
+        Query query = storeQueueCollection.whereEqualTo("valid", true).orderBy("timestamp");//Get valid store queue list and sort by timestamp
+        //valid query can be removed as Queue document is entirely removed on queue completion
 
         FirestoreRecyclerOptions<Queue> options = new FirestoreRecyclerOptions.Builder<Queue>()
                 .setQuery(query, Queue.class).setLifecycleOwner(this)

@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.adamm.queueme.Holders.StoreViewHolder;
+import com.adamm.queueme.MainActivity;
 import com.adamm.queueme.R;
 import com.adamm.queueme.entities.Store;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
@@ -32,8 +33,8 @@ import java.util.List;
 public class StoresFragment extends Fragment {
 
     private RecyclerView mStoresRecycler;
-    private static final CollectionReference storesCollection =FirebaseFirestore.getInstance().collection("stores");
-    public static final CollectionReference favCollection = FirebaseFirestore.getInstance().collection("users").document(FirebaseAuth.getInstance().getCurrentUser().getUid()).collection("Favorites");
+    private CollectionReference storesCollection =FirebaseFirestore.getInstance().collection("stores");
+    private CollectionReference favCollection = FirebaseFirestore.getInstance().collection("users").document(MainActivity.currUser.getUid()).collection("Favorites");
     private List<Store> favoriteList;
 
     public static StoresFragment newInstance()

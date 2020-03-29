@@ -15,15 +15,15 @@ import androidx.fragment.app.Fragment;
 
 import com.adamm.queueme.entities.User;
 import com.adamm.queueme.fragments.FavoritesFragment;
+import com.adamm.queueme.fragments.MyQueuesFragment;
 import com.adamm.queueme.fragments.ProfileFragment;
+import com.adamm.queueme.fragments.QueuesFragment;
 import com.adamm.queueme.fragments.StoresFragment;
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.IdpResponse;
 import com.firebase.ui.auth.util.ExtraConstants;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
@@ -31,11 +31,17 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.mikepenz.materialdrawer.Drawer;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 
+
+/**
+KNOWN BUGS:
+ Signing in and out into different users, introduces a query issues of previous user reference. MUST FIX
+ */
+
 public class MainActivity extends AppCompatActivity {
     private static final int RC_SIGN_IN = 123;
     private static final String TAG = "SignInActivity";
-    private FirebaseUser currUser;
-    private Fragment profileFrag, myQueuesFrag, favoritesFrag, storesFrag;
+    public static FirebaseUser currUser;
+    private Fragment profileFrag, queuesFrag, favoritesFrag, storesFrag;
     private Toolbar toolbar;
 
     public static Intent createIntent(@NonNull Context context, @Nullable IdpResponse response) {
@@ -48,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         toolbar = findViewById(R.id.toolbar);
-       // toolbar.setTitleTextColor(getResources().);
+        // toolbar.setTitleTextColor(getResources().);
         setSupportActionBar(toolbar);
         DrawerUtil.getDrawer(this, toolbar, drawerListener);
 
@@ -56,11 +62,13 @@ public class MainActivity extends AppCompatActivity {
 
         IdpResponse response = getIntent().getParcelableExtra(ExtraConstants.IDP_RESPONSE);
         DocumentReference userRef = FirebaseFirestore.getInstance().collection("users").document(currUser.getUid());
-       // if (response.isNewUser())
-            userRef.set(new User(currUser.getUid(), currUser.getDisplayName(), currUser.getPhoneNumber(), currUser.getEmail()));
+
+        if (response != null)
+            if (response.isNewUser())
+                userRef.set(new User(currUser.getUid(), currUser.getDisplayName(), currUser.getPhoneNumber(), currUser.getEmail()));
 
         profileFrag = ProfileFragment.newInstance();
-        myQueuesFrag= null;
+        queuesFrag = QueuesFragment.newInstance();
         favoritesFrag = FavoritesFragment.newInstance();
         storesFrag = StoresFragment.newInstance();
 
@@ -116,6 +124,8 @@ public class MainActivity extends AppCompatActivity {
                     break;
                 case 2:
                     toolbar.setTitle(R.string.my_queues);
+                    fragment = queuesFrag;
+                    DrawerUtil.drawer.closeDrawer();
                     break;
                 case 3:
                     toolbar.setTitle(R.string.favorite_stores);
@@ -149,7 +159,7 @@ public class MainActivity extends AppCompatActivity {
                     break;
             }
             try {
-               // fragment = (Fragment) fragmentClass.newInstance();
+                // fragment = (Fragment) fragmentClass.newInstance();
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, fragment).commit();
             } catch (Exception e) {
                 e.printStackTrace();

@@ -49,7 +49,7 @@ public class ProfileFragment extends Fragment {
     private EditText mPassword;
     private Button mBtnUpdateProfile;
     private Button mBtnUpdatePassword;
-    private FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+    private FirebaseUser user = MainActivity.currUser;
     private static final String REQUIRED = "Required";
 
     @Nullable

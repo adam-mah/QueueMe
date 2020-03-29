@@ -11,17 +11,17 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.adamm.queueme.MainActivity;
 import com.adamm.queueme.R;
 import com.adamm.queueme.StoreQueueActivity;
 import com.adamm.queueme.entities.Store;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 public class StoreViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-    public static final CollectionReference favCollection = FirebaseFirestore.getInstance().collection("users").document(FirebaseAuth.getInstance().getCurrentUser().getUid()).collection("Favorites");
+    private CollectionReference favCollection = FirebaseFirestore.getInstance().collection("users").document(MainActivity.currUser.getUid()).collection("Favorites");
     private final TextView mStoreNameField;
     private final TextView mStoreOwnerField;
     private final ImageView mFavImage;
@@ -52,12 +52,14 @@ public class StoreViewHolder extends RecyclerView.ViewHolder implements View.OnC
         mFavImage.setOnClickListener(new View.OnClickListener() {//Managing clicks to favorite each store add/remove from favorites
             @Override
             public void onClick(final View view) {
+                mFavImage.setEnabled(false);
                 if (isFavorite) {//Remove from favorites
                     isFavorite = false;
                     favCollection.document(documentID).delete().addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
                             mFavImage.setImageResource(R.drawable.ic_star_outline);
+                            mFavImage.setEnabled(true);
                             Toast.makeText(view.getContext(), store.getStoreName() + " was removed from favorites", Toast.LENGTH_LONG).show();
                         }
                     });
@@ -67,6 +69,7 @@ public class StoreViewHolder extends RecyclerView.ViewHolder implements View.OnC
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
                             mFavImage.setImageResource(R.drawable.ic_star);
+                            mFavImage.setEnabled(true);
                             Toast.makeText(view.getContext(), store.getStoreName() + " was added to favorites", Toast.LENGTH_LONG).show();
                         }
                     });
@@ -78,8 +81,7 @@ public class StoreViewHolder extends RecyclerView.ViewHolder implements View.OnC
     @Override
     public void onClick(View view) {
         Intent intent = StoreQueueActivity.createIntent(view.getContext(), documentID);
-        intent.putExtra("storeName", store.getStoreName());//fix
+        intent.putExtra("EXTRA_STORE_NAME", store.getStoreName());//fix
         view.getContext().startActivity(intent);
-        Toast.makeText(view.getContext(), "Clicked on " + store.getStoreName() + " ID" + documentID, Toast.LENGTH_LONG).show();
     }
 }

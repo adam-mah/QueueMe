@@ -18,6 +18,9 @@
     <string name="store_queue">Store Queue</string>
     <string name="new_queue">New Queue</string>
     <string name="queue_time">Queue Time</string>
+    <string name="queue_me">Queue Me</string>
+    <string name="active_queues">Upcoming Queues</string>
+    <string name="all_queues">All Queues</string>
 
     <string name="learn_more">Learn More</string>
 

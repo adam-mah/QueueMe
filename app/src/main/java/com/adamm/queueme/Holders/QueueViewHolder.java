@@ -12,7 +12,6 @@ import com.adamm.queueme.R;
 import com.adamm.queueme.entities.Queue;
 
 public class QueueViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-    //public static final CollectionReference queueCollection = FirebaseFirestore.getInstance().collection("stores").document(FirebaseAuth.getInstance().getCurrentUser().getUid()).collection("Favorites");
     private final TextView mTimestampField;
     private final TextView mCustomerNameField;
     private String documentID;
@@ -28,14 +27,12 @@ public class QueueViewHolder extends RecyclerView.ViewHolder implements View.OnC
     public void bind(final Queue queue, final String documentID) {
         this.documentID = documentID;
         this.queue = queue;//Queue data
-        mCustomerNameField.setText(queue.getUserID());
+        mCustomerNameField.setText(queue.getUserName());
         mTimestampField.setText(queue.getTimestamp().toString());
     }
 
     @Override
     public void onClick(View view) {
-        // Intent intent = StoreQueueActivity.createIntent(view.getContext(), documentID);
-        //view.getContext().startActivity(intent);
-        Toast.makeText(view.getContext(), "Clicked on Queue ID: " + documentID, Toast.LENGTH_LONG).show();
+        //Toast.makeText(view.getContext(), "Clicked on Queue ID: " + documentID, Toast.LENGTH_LONG).show();
     }
 }
