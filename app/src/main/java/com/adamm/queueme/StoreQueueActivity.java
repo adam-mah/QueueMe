@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.widget.Toolbar;
@@ -35,6 +36,7 @@ public class StoreQueueActivity extends AppCompatActivity {
     private Toolbar toolbar;
     private String documentID;
     private Query storeQuery;
+    private TextView mEmptyListMessage;
 
     public static Intent createIntent(@NonNull Context context, String documentID) {
         return new Intent().setClass(context, StoreQueueActivity.class).putExtra("EXTRA_STORE_ID", documentID/*store document ID*/);
@@ -55,6 +57,8 @@ public class StoreQueueActivity extends AppCompatActivity {
         mManager.setReverseLayout(true);
         mManager.setStackFromEnd(true);
         mQueueRecycler.setLayoutManager(mManager);
+        mEmptyListMessage = findViewById(R.id.txtEmptyMessage);
+
 
         documentID = getIntent().getStringExtra("EXTRA_STORE_ID");
         storeQueueCollection = FirebaseFirestore.getInstance().collection("stores").document(documentID).collection("Queue");
@@ -122,7 +126,7 @@ public class StoreQueueActivity extends AppCompatActivity {
             @Override
             public void onDataChanged() {
                 // If there are no chat messages, show a view that invites the user to add a message.
-                // mEmptyListMessage.setVisibility(getItemCount() == 0 ? View.VISIBLE : View.GONE);
+                 mEmptyListMessage.setVisibility(getItemCount() == 0 ? View.VISIBLE : View.GONE);
             }
         };
     }

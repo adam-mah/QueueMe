@@ -17,7 +17,7 @@ import com.adamm.queueme.entities.User;
 import com.adamm.queueme.fragments.FavoritesFragment;
 import com.adamm.queueme.fragments.MyQueuesFragment;
 import com.adamm.queueme.fragments.ProfileFragment;
-import com.adamm.queueme.fragments.QueuesFragment;
+import com.adamm.queueme.pagers.QueuePagerAbstract;
 import com.adamm.queueme.fragments.StoresFragment;
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.IdpResponse;
@@ -38,6 +38,7 @@ KNOWN BUGS:
  */
 
 public class MainActivity extends AppCompatActivity {
+    public static Context appContext;
     private static final int RC_SIGN_IN = 123;
     private static final String TAG = "SignInActivity";
     public static FirebaseUser currUser;
@@ -52,6 +53,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        appContext = this.getApplicationContext();
         setContentView(R.layout.activity_main);
         toolbar = findViewById(R.id.toolbar);
         // toolbar.setTitleTextColor(getResources().);
@@ -68,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
                 userRef.set(new User(currUser.getUid(), currUser.getDisplayName(), currUser.getPhoneNumber(), currUser.getEmail()));
 
         profileFrag = ProfileFragment.newInstance();
-        queuesFrag = QueuesFragment.newInstance();
+        queuesFrag = MyQueuesFragment.newInstance();
         favoritesFrag = FavoritesFragment.newInstance();
         storesFrag = StoresFragment.newInstance();
 
@@ -80,37 +82,6 @@ public class MainActivity extends AppCompatActivity {
                 (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
         inputMethodManager.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(), 0);
     }
-
-   /* @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_logout) {
-            AuthUI.getInstance()
-                    .signOut(this)
-                    .addOnCompleteListener(new OnCompleteListener<Void>() {
-                        public void onComplete(@NonNull Task<Void> task) {
-                            // user is now signed out
-                            startActivity(new Intent(getApplicationContext(), SignInActivity.class));
-                            finish();
-                        }
-                    });
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }*/
 
     private Drawer.OnDrawerItemClickListener drawerListener = new Drawer.OnDrawerItemClickListener() {
         @Override
@@ -159,12 +130,10 @@ public class MainActivity extends AppCompatActivity {
                     break;
             }
             try {
-                // fragment = (Fragment) fragmentClass.newInstance();
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, fragment).commit();
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            //Toast.makeText(getApplicationContext(), position + "", Toast.LENGTH_SHORT).show();
             return true;
         }
     };

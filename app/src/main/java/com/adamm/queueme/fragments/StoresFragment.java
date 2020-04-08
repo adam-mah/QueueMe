@@ -5,6 +5,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -36,6 +37,7 @@ public class StoresFragment extends Fragment {
     private CollectionReference storesCollection =FirebaseFirestore.getInstance().collection("stores");
     private CollectionReference favCollection = FirebaseFirestore.getInstance().collection("users").document(MainActivity.currUser.getUid()).collection("Favorites");
     private List<Store> favoriteList;
+    private TextView mEmptyListMessage;
 
     public static StoresFragment newInstance()
     {
@@ -59,7 +61,7 @@ public class StoresFragment extends Fragment {
         mManager.setReverseLayout(true);
         mManager.setStackFromEnd(true);
         mStoresRecycler.setLayoutManager(mManager);
-
+        mEmptyListMessage = view.findViewById(R.id.txtEmptyMessage);
         favoriteList= new ArrayList<>();//Favorite stores list
         favCollection.get() //get user favorites
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -126,8 +128,7 @@ public class StoresFragment extends Fragment {
 
             @Override
             public void onDataChanged() {
-                // If there are no chat messages, show a view that invites the user to add a message.
-               // mEmptyListMessage.setVisibility(getItemCount() == 0 ? View.VISIBLE : View.GONE);
+               mEmptyListMessage.setVisibility(getItemCount() == 0 ? View.VISIBLE : View.GONE);
             }
         };
     }

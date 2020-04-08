@@ -94,14 +94,14 @@ public class NewQueueActivity extends AppCompatActivity implements View.OnClickL
     private View.OnClickListener queueMeClick = new View.OnClickListener(){
         @Override
         public void onClick(View view) {
-            Queue newQueue = new Queue(mTxtName.getText().toString());
+            Queue newQueue = new Queue(mTxtName.getText().toString()); /**Add this to transaction**/
             storeQueueCollection.add(newQueue).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
                 @Override
                 public void onComplete(@NonNull Task<DocumentReference> task) {
                     finish();
                 }
             });
-            userQueueCollection.document(documentID).set(newQueue);//Add queue to user Queue Collection using storeID key
+            userQueueCollection.add(newQueue);//Add queue to user Queue Collection using storeID key
             mQueueMeBtn.setEnabled(false);
         }
     };
