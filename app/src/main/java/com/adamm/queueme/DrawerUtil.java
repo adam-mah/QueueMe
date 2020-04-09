@@ -1,20 +1,10 @@
 package com.adamm.queueme;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.graphics.Color;
-import android.view.View;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.widget.Toolbar;
-import androidx.fragment.app.Fragment;
 
-import com.adamm.queueme.fragments.FavoritesFragment;
-import com.adamm.queueme.fragments.ProfileFragment;
-import com.adamm.queueme.fragments.StoresFragment;
-import com.firebase.ui.auth.AuthUI;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.PhoneAuthProvider;
@@ -27,7 +17,6 @@ import com.mikepenz.materialdrawer.DrawerBuilder;
 import com.mikepenz.materialdrawer.model.DividerDrawerItem;
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
 import com.mikepenz.materialdrawer.model.ProfileDrawerItem;
-import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 
 public class DrawerUtil {
     public static Drawer drawer;
@@ -43,9 +32,10 @@ public class DrawerUtil {
         PrimaryDrawerItem profile = new PrimaryDrawerItem().withIdentifier(1).withName(R.string.profile).withIcon(new IconicsDrawable(activity)
                 .icon(GoogleMaterial.Icon.gmd_person).color(Color.rgb(203, 84, 39)));
         PrimaryDrawerItem queues = new PrimaryDrawerItem().withIdentifier(2).withName(R.string.my_queues).withIcon(new IconicsDrawable(activity).icon(GoogleMaterial.Icon.gmd_queue).color(Color.rgb(203, 84, 39)));
-        PrimaryDrawerItem favoriteStores = new PrimaryDrawerItem().withIdentifier(3).withName(R.string.favorite_stores).withIcon(GoogleMaterial.Icon.gmd_favorite).withIconColor(Color.rgb(203, 84, 39));
+        // PrimaryDrawerItem favoriteStores = new PrimaryDrawerItem().withIdentifier(3).withName(R.string.favorite_stores).withIcon(GoogleMaterial.Icon.gmd_favorite).withIconColor(Color.rgb(203, 84, 39));
+        PrimaryDrawerItem favoriteStores = new PrimaryDrawerItem().withIdentifier(3).withName(R.string.favorite_stores).withIcon(new IconicsDrawable(activity).icon(GoogleMaterial.Icon.gmd_favorite).color(Color.rgb(203, 84, 39)));
         PrimaryDrawerItem stores = new PrimaryDrawerItem().withIdentifier(4).withName(R.string.stores).withIcon(new IconicsDrawable(activity).icon(GoogleMaterial.Icon.gmd_store).color(Color.rgb(203, 84, 39)));
-        PrimaryDrawerItem logout = new PrimaryDrawerItem().withIdentifier(5).withName(R.string.logout).withIcon(new IconicsDrawable(activity).icon(GoogleMaterial.Icon.gmd_exit_to_app).color(Color.rgb(203, 84, 39)));
+        PrimaryDrawerItem logout = new PrimaryDrawerItem().withIdentifier(5).withName(R.string.logout).withSelectable(false).withIcon(new IconicsDrawable(activity).icon(GoogleMaterial.Icon.gmd_exit_to_app).color(Color.rgb(203, 84, 39)));
 
 
         //create the drawer and remember the `Drawer` result object

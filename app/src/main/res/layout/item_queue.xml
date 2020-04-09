@@ -2,21 +2,33 @@
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_margin="5dp">
+    android:layout_height="100dp"
+    android:layout_margin="5dp"
+    app:cardElevation="5dp">
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:padding="10dp">
 
-        <include layout="@layout/include_queue_text"
+        <include
+            layout="@layout/include_queue_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
-            android:layout_below="@+id/postAuthorLayout"
+            android:layout_alignParentTop="true"
             android:layout_marginLeft="5dp"
-            android:layout_marginTop="10dp" />
+            android:layout_marginTop="20dp" />
+
+        <ImageView
+            android:id="@+id/imgCancel"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="5dp"
+            app:srcCompat="@drawable/ic_cancel_schedule_send_black_24dp" />
 
     </RelativeLayout>
 

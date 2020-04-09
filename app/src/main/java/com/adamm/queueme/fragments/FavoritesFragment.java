@@ -1,7 +1,6 @@
 package com.adamm.queueme.fragments;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,7 +18,6 @@ import com.adamm.queueme.R;
 import com.adamm.queueme.entities.Store;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
@@ -28,7 +26,7 @@ public class FavoritesFragment extends Fragment {
 
     private RecyclerView mFavoritesRecycler;
     private TextView mEmptyListMessage;
-    public static final CollectionReference favCollection = FirebaseFirestore.getInstance().collection("users").document(MainActivity.currUser.getUid()).collection("Favorites");
+    private CollectionReference favCollection = FirebaseFirestore.getInstance().collection("users").document(MainActivity.currUser.getUid()).collection("Favorites");
 
     public static FavoritesFragment newInstance() {
         FavoritesFragment f = new FavoritesFragment();

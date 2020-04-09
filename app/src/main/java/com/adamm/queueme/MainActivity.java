@@ -2,6 +2,7 @@ package com.adamm.queueme;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -9,6 +10,7 @@ import android.view.inputmethod.InputMethodManager;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
@@ -17,13 +19,13 @@ import com.adamm.queueme.entities.User;
 import com.adamm.queueme.fragments.FavoritesFragment;
 import com.adamm.queueme.fragments.MyQueuesFragment;
 import com.adamm.queueme.fragments.ProfileFragment;
-import com.adamm.queueme.pagers.QueuePagerAbstract;
 import com.adamm.queueme.fragments.StoresFragment;
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.IdpResponse;
 import com.firebase.ui.auth.util.ExtraConstants;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
@@ -35,6 +37,12 @@ import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 /**
 KNOWN BUGS:
  Signing in and out into different users, introduces a query issues of previous user reference. MUST FIX
+
+ TODO:
+ Disable past times in a new queue
+ Cancelling a queue - Done
+ Favorites MUST store, store IDs only and get data from stores collection
+ Add open/closed store states;
  */
 
 public class MainActivity extends AppCompatActivity {
@@ -53,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        appContext = this.getApplicationContext();
+        appContext = MainActivity.this;
         setContentView(R.layout.activity_main);
         toolbar = findViewById(R.id.toolbar);
         // toolbar.setTitleTextColor(getResources().);
@@ -109,24 +117,25 @@ public class MainActivity extends AppCompatActivity {
                     DrawerUtil.drawer.closeDrawer();
                     break;
                 case 5:
-                               /* AlertDialog.Builder builder = new MaterialAlertDialogBuilder(getApplicationContext())
-                                        .setTitle("Title")
-                                        .setMessage("Message")
-                                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                                            @Override
-                                            public void onClick(DialogInterface dialogInterface, int i) {*/
-                    AuthUI.getInstance()
-                            .signOut(getApplicationContext())
-                            .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                public void onComplete(@NonNull Task<Void> task) {
-                                    // user is now signed out
-                                    startActivity(new Intent(getApplicationContext(), SignInActivity.class));
-                                    finish();
+                    AlertDialog.Builder builder = new MaterialAlertDialogBuilder(MainActivity.this)
+                            .setTitle("Logout")
+                            .setMessage("Are you sure you want to logout?")
+                            .setNegativeButton("No", null)
+                            .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    AuthUI.getInstance()
+                                            .signOut(getApplicationContext())
+                                            .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                public void onComplete(@NonNull Task<Void> task) {
+                                                    // user is now signed out
+                                                    startActivity(new Intent(getApplicationContext(), SignInActivity.class));
+                                                    finish();
+                                                }
+                                            });
                                 }
                             });
-                                           /* }
-                                        });
-                                builder.show();*/
+                    builder.show();
                     break;
             }
             try {

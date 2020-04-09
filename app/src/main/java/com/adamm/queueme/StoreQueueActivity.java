@@ -8,27 +8,24 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import androidx.appcompat.widget.Toolbar;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.adamm.queueme.Holders.QueueViewHolder;
-import com.adamm.queueme.Holders.StoreViewHolder;
 import com.adamm.queueme.entities.Queue;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
+import com.mikepenz.google_material_typeface_library.GoogleMaterial;
+import com.mikepenz.iconics.IconicsDrawable;
 
 public class StoreQueueActivity extends AppCompatActivity {
     private RecyclerView mQueueRecycler;
@@ -66,13 +63,12 @@ public class StoreQueueActivity extends AppCompatActivity {
         attachRecyclerViewAdapter();//Initiate adapter
 
         FloatingActionButton fab = findViewById(R.id.fab);
+        fab.setImageDrawable(new IconicsDrawable(this).icon(GoogleMaterial.Icon.gmd_add));
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = NewQueueActivity.createIntent(view.getContext(), documentID);
                 view.getContext().startActivity(intent);
-                /*Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();*/
             }
         });
     }
@@ -120,7 +116,7 @@ public class StoreQueueActivity extends AppCompatActivity {
 
             @Override
             protected void onBindViewHolder(QueueViewHolder holder, int position, Queue queue) {
-                holder.bind(queue, getSnapshots().getSnapshot(position).getId());//All queried results are favorites
+                holder.bind(queue, getSnapshots().getSnapshot(position).getId(), true);//All queried results are favorites
             }
 
             @Override

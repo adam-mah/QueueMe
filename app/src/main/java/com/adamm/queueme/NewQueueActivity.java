@@ -13,13 +13,10 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.adamm.queueme.entities.Queue;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.text.SimpleDateFormat;
@@ -35,6 +32,8 @@ public class NewQueueActivity extends AppCompatActivity implements View.OnClickL
     private TextInputEditText mTxtDate;
     private CollectionReference userQueueCollection = FirebaseFirestore.getInstance().collection("users").document(MainActivity.currUser.getUid()).collection("Queue");
     private CollectionReference storeQueueCollection;
+    private Date date;
+    private final String TAG = "NewQueue";
 
     public static Intent createIntent(@NonNull Context context, String storeID) {
         return new Intent().setClass(context, NewQueueActivity.class)
@@ -64,7 +63,6 @@ public class NewQueueActivity extends AppCompatActivity implements View.OnClickL
         //Get current date
         Date c = Calendar.getInstance().getTime();
         System.out.println("Current time => " + c);
-
         SimpleDateFormat df = new SimpleDateFormat("dd-MMM-yyyy");
         String formattedDate = df.format(c);
         mTxtDate.setText(formattedDate);
@@ -83,10 +81,15 @@ public class NewQueueActivity extends AppCompatActivity implements View.OnClickL
                     public void onTimeSet(TimePicker view, int hourOfDay,
                                           int minute) {
 
-                        mTxtTime.setText(hourOfDay + ":" + minute);
+                        c.set(Calendar.HOUR_OF_DAY, hourOfDay);
+                        c.set(Calendar.MINUTE, minute);
+                        //SimpleDateFormat timeFormat=new SimpleDateFormat("yyyy-MM-dd HH:mm");
+                        SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm");
+                        date = c.getTime();
+                        // Log.d("TIME", timeFormat.format(c.getTime()));
+                        mTxtTime.setText(timeFormat.format(c.getTime()));
                     }
-                }, mHour, mMinute, false);
-
+                }, mHour, mMinute, true);
         timePickerDialog.show();
     }
 
@@ -94,14 +97,12 @@ public class NewQueueActivity extends AppCompatActivity implements View.OnClickL
     private View.OnClickListener queueMeClick = new View.OnClickListener(){
         @Override
         public void onClick(View view) {
-            Queue newQueue = new Queue(mTxtName.getText().toString()); /**Add this to transaction**/
-            storeQueueCollection.add(newQueue).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
-                @Override
-                public void onComplete(@NonNull Task<DocumentReference> task) {
-                    finish();
-                }
+            Queue newQueue = new Queue(mTxtName.getText().toString(), MainActivity.currUser.getUid(), documentID, date);
+            storeQueueCollection.add(newQueue).addOnCompleteListener(task -> {
+                userQueueCollection.document(task.getResult().getId()).set(newQueue);//Add queue to user Queue Collection using storeID key
+                finish();
             });
-            userQueueCollection.add(newQueue);//Add queue to user Queue Collection using storeID key
+
             mQueueMeBtn.setEnabled(false);
         }
     };
