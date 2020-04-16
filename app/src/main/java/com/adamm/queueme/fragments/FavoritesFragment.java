@@ -22,11 +22,20 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 
+import java.util.ArrayList;
+
+/**
+ * LIMIT FAVORITE STORES TO 10
+ */
+
 public class FavoritesFragment extends Fragment {
 
     private RecyclerView mFavoritesRecycler;
     private TextView mEmptyListMessage;
+    private CollectionReference storesCollection = FirebaseFirestore.getInstance().collection("stores");
     private CollectionReference favCollection = FirebaseFirestore.getInstance().collection("users").document(MainActivity.currUser.getUid()).collection("Favorites");
+    private Query query;
+    private ArrayList<String> favoriteList;
 
     public static FavoritesFragment newInstance() {
         FavoritesFragment f = new FavoritesFragment();
@@ -51,7 +60,32 @@ public class FavoritesFragment extends Fragment {
         mManager.setStackFromEnd(true);
         mFavoritesRecycler.setLayoutManager(mManager);
 
-        attachRecyclerViewAdapter();//Initiate adapter
+        attachRecyclerViewAdapter();//Initiate adapter after favorites list completion
+        /*favCollection.addSnapshotListener(new EventListener<QuerySnapshot>() {//Detect changes in favorites collection
+            @Override
+            public void onEvent(@Nullable QuerySnapshot snapshots,
+                                @Nullable FirebaseFirestoreException e) {
+                if (e != null) {
+                    Log.w("FavoriteListener", "listen:error", e);
+                    return;
+                }
+
+                for (DocumentChange dc : snapshots.getDocumentChanges()) {
+                    switch (dc.getType()) {
+                        case ADDED:
+                            Log.d("FavoriteListener", "New store: " + dc.getDocument().getData());
+                            break;
+                        case MODIFIED:
+                            Log.d("FavoriteListener", "Modified store: " + dc.getDocument().getData());
+                            break;
+                        case REMOVED:
+                            favoriteList.remove(dc.getDocument().getId());
+                            Log.d("FavoriteListener", "Removed store: " + dc.getDocument().getId());
+                            break;
+                    }
+                }
+            }
+        });*/
     }
 
     private void attachRecyclerViewAdapter() {

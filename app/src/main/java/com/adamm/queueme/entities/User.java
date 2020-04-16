@@ -8,8 +8,8 @@ public class User {
     private String Name;
     private String Phone;
     private String Email;
-    private boolean isOwner = false;
-    private List storesList = null;
+    //private boolean isOwner;
+    private List storesList;
 
     public User(){}
 
@@ -18,7 +18,7 @@ public class User {
         Name = name;
         Phone = phone;
         Email = email;
-        isOwner = false;
+        //isOwner = false;
     }
 
     public String getUserID() {
@@ -53,13 +53,13 @@ public class User {
         Email = email;
     }
 
-    public boolean isOwner() {
-        return isOwner;
-    }
+    // public boolean isOwner() {
+    //   return isOwner;
+    // }
 
-    public void setOwner(boolean owner) {
-        isOwner = owner;
-    }
+    // public void setOwner(boolean owner) {
+    //     isOwner = owner;
+    //  }
 
     public List getStoresList() {
         return storesList;

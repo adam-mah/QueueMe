@@ -2,6 +2,7 @@ package com.adamm.queueme.Holders;
 
 import android.content.Intent;
 import android.graphics.Color;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +11,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.adamm.queueme.MainActivity;
@@ -20,12 +22,16 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
 import com.mikepenz.iconics.IconicsDrawable;
 
 public class StoreViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
     private CollectionReference favCollection = FirebaseFirestore.getInstance().collection("users").document(MainActivity.currUser.getUid()).collection("Favorites");
+    private CollectionReference storeCollection = FirebaseFirestore.getInstance().collection("stores");
     private final TextView mStoreNameField;
     private final TextView mStoreOwnerField;
     private final ImageView mFavImage;
@@ -55,6 +61,29 @@ public class StoreViewHolder extends RecyclerView.ViewHolder implements View.OnC
         else
             mFavImage.setImageDrawable(new IconicsDrawable(MainActivity.appContext).icon(GoogleMaterial.Icon.gmd_favorite_border).color(Color.rgb(203, 84, 39)));
 
+        if (isFavored) {//Make listener for each favored item so status can be updated
+            storeCollection.document(documentID).addSnapshotListener(new EventListener<DocumentSnapshot>() {
+                @Override
+                public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
+                    if (e != null) {
+                        Log.w("FieldChangeListener", "Listen failed.", e);
+                        return;
+                    }
+
+                    String source = documentSnapshot != null && documentSnapshot.getMetadata().hasPendingWrites()
+                            ? "Local" : "Server";
+
+                    if (documentSnapshot != null && documentSnapshot.exists()) {
+                        Log.d("FieldChangeListener", source + " data: " + documentSnapshot.getData());
+                       /* boolean b = documentSnapshot.getBoolean("open");
+                        favCollection.document(documentID).update("open", b);*/
+                        favCollection.document(documentID).set(documentSnapshot.toObject(Store.class));
+                    } else {
+                        Log.d("FieldChangeListener", source + " data: null");
+                    }
+                }
+            });
+        }
 
         if (store.isOpen())
             mStateImage.setImageResource(R.drawable.ic_open);

@@ -28,7 +28,6 @@ public class DrawerUtil {
                 .withHeaderBackground(R.drawable.ic_qme).withSelectionListEnabled(false).withProfileImagesVisible(false)
                 .addProfiles(new ProfileDrawerItem().withName(currUser.getDisplayName()).withEmail(currUser.getProviderId().equals(PhoneAuthProvider.PROVIDER_ID) ? currUser.getPhoneNumber() : currUser.getEmail()))
                 .build();
-
         PrimaryDrawerItem profile = new PrimaryDrawerItem().withIdentifier(1).withName(R.string.profile).withIcon(new IconicsDrawable(activity)
                 .icon(GoogleMaterial.Icon.gmd_person).color(Color.rgb(203, 84, 39)));
         PrimaryDrawerItem queues = new PrimaryDrawerItem().withIdentifier(2).withName(R.string.my_queues).withIcon(new IconicsDrawable(activity).icon(GoogleMaterial.Icon.gmd_queue).color(Color.rgb(203, 84, 39)));
@@ -51,4 +50,7 @@ public class DrawerUtil {
                 .build();
     }
 
+    public static Drawer getDrawerRef() {
+        return drawer;
+    }
 }
