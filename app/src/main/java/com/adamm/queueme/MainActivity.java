@@ -66,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
     public static FirebaseUser currUser;
     private Fragment profileFrag, queuesFrag, favoritesFrag, storesFrag;
     private Toolbar toolbar;
-    ArrayList<String> storesIdList;
+    private DocumentReference userRef;
     ArrayList<Store> storesList;
 
     public static Intent createIntent(@NonNull Context context, @Nullable IdpResponse response) {
@@ -87,7 +87,7 @@ public class MainActivity extends AppCompatActivity {
         currUser = FirebaseAuth.getInstance().getCurrentUser();
 
         IdpResponse response = getIntent().getParcelableExtra(ExtraConstants.IDP_RESPONSE);
-        DocumentReference userRef = FirebaseFirestore.getInstance().collection("users").document(currUser.getUid());
+        userRef = FirebaseFirestore.getInstance().collection("users").document(currUser.getUid());
 
         if (response != null) {
             if (response.isNewUser())
@@ -95,38 +95,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         /**Initialize owners drawer view*/
-        CollectionReference storeCollection = FirebaseFirestore.getInstance().collection("stores");
-        userRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful()) {
-                    storesIdList = (ArrayList<String>) task.getResult().get("storesList");
-                    if (storesIdList != null) {
-                        storesList = new ArrayList<>();
-                        storeCollection.whereIn(FieldPath.documentId(), storesIdList).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                            @Override
-                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                if (task.isSuccessful()) {
-                                    for (QueryDocumentSnapshot document : task.getResult()) {
-                                        storesList.add(document.toObject(Store.class));
-                                        Log.d("storeList", document.getData().toString());
-                                    }
-                                    for (Store store : storesList) {
-                                        PrimaryDrawerItem storeItem = new PrimaryDrawerItem().withName(store.getStoreName()).withIcon(new IconicsDrawable(MainActivity.appContext).icon(GoogleMaterial.Icon.gmd_store).color(Color.rgb(203, 84, 39)));
-                                        DrawerUtil.getDrawerRef().addItemAtPosition(storeItem, 7);
-                                    }
-                                } else {
-                                    Log.d("storeList", task.getResult().toString());
-                                }
-                            }
-                        });
-                        DrawerUtil.getDrawerRef().addItemAtPosition(new DividerDrawerItem(), 6);
-                        DrawerUtil.getDrawerRef().addItemAtPosition(new DividerDrawerItem(), storesList.size() + 6);
-                    }
-                }
-            }
-        });
-
+        initializeStoreOwnerView();
 
         profileFrag = ProfileFragment.newInstance();
         queuesFrag = MyQueuesFragment.newInstance();
@@ -140,6 +109,42 @@ public class MainActivity extends AppCompatActivity {
         InputMethodManager inputMethodManager =
                 (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
         inputMethodManager.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(), 0);
+    }
+
+    private void initializeStoreOwnerView() {
+
+        userRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    ArrayList<String> storesIdList = (ArrayList<String>) task.getResult().get("storesList");//Fetch owned stores from user
+                    if (storesIdList != null) {
+                        CollectionReference storeCollection = FirebaseFirestore.getInstance().collection("stores");
+
+                        storeCollection.whereIn(FieldPath.documentId(), storesIdList).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<QuerySnapshot> task) {//Make array of Store.class
+                                if (task.isSuccessful()) {
+                                    storesList = new ArrayList<>();
+                                    for (QueryDocumentSnapshot document : task.getResult()) {
+                                        storesList.add(document.toObject(Store.class));
+                                        Log.d("storeList", document.getData().toString());
+                                    }
+                                    DrawerUtil.getDrawerRef().addItemAtPosition(new DividerDrawerItem(), 6);
+                                    for (Store store : storesList) {//Add owned stores to drawer
+                                        PrimaryDrawerItem storeItem = new PrimaryDrawerItem().withName(store.getStoreName()).withIcon(new IconicsDrawable(MainActivity.appContext).icon(GoogleMaterial.Icon.gmd_store).color(Color.rgb(203, 84, 39)));
+                                        DrawerUtil.getDrawerRef().addItemAtPosition(storeItem, 7);
+                                    }
+                                    DrawerUtil.getDrawerRef().addItemAtPosition(new DividerDrawerItem(), storesList.size() + 7);
+                                } else {
+                                    Log.d("storeList", task.getResult().toString());
+                                }
+                            }
+                        });
+                    }
+                }
+            }
+        });
     }
 
     private Drawer.OnDrawerItemClickListener drawerListener = new Drawer.OnDrawerItemClickListener() {
